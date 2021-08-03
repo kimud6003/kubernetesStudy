@@ -1,5 +1,5 @@
 # Kubernetes
-    <p align="center"><img src="./READMEIMG/Docker7.PNG"></p>
+<p align="center"><img src="./READMEIMG/Docker7.PNG"></p>
 
 ## 배경 
 
@@ -95,5 +95,4 @@
 
 
 ## 데모 프로그램
-
-    <p align="center"><img src="./READMEIMG/Docker6.PNG"></p>
+<p align="center"><img src="./READMEIMG/Docker6.PNG"></p>
