@@ -108,23 +108,40 @@
 
   - 이렇게 몇개의 명령오로 UTS 네임스페이스를 분리가 가능하며 아래 코드를 통해 확인도 가능합니다
 
-        ![pod](img/UTSnamespace.jpg)
+  ![pod](img/UTSnamespace.jpg)
 
   2. `IPC namespace` : Inter-process communication. 프로세스간 통신 격리
 
+  ![ipc](img/ipc.png)
+
+  - Process의 보안을 위한 Namespace
+  - UNIX System V로부터 차용
+  - Inter-process communication을 격리하여, 의도치않게 접근하거나 권한이 없는 프로세스에 의해 제거되는 일을 방지하기 위해 사용
+  - 개별 IPC는 자신만의 System V 식별자와 POSIX 메시지큐 파일시스템을 가지고 있다
   - IPC 네임스페이스는 프로세스가 자신의 System V IPC 객체와 POSIX 메시지 큐 자원을 가질 수 있게 한다
 
   3. `PID namespace` : PID (Process ID)를 분할 관리
+     ![pid](img/pid.png)
 
-  - PID 네임스페이스는 프로세스의 ID를 격리할 수 있는 네임스페이스입니다.
-
-  - 리눅스에서 PID는 init 프로세스 1을 시작하며 그 외에 모든 프로세스는 항상 1보다 큰 PID를 부여받습니다.
-
-  - PID 네임스페이스를 분리하면 PID가 다시 1부터 시작합니다.
+  - Process ID 공간을 분리하여, PID Namespace 안에서 PID=1인 프로세스를 만들 수 있다.
+  - 또한 PID가 특정되므로, 이 프로세스를 죽이는 시그널(SIG_KILL, SIG_TERM)을 보낼 수도 있다.
+  - 원래 Process는 계층 구조로 Parent-Child 관계를 이루고 있고 최상단엔 init process가 존재한다.
+  - init은 zombie process를 제거하는 역할을 하지만, PID Namespace를 분리할 경우 PID=1 프로세스가 이 기능을 대신 수행해야 한다.
+  - 동일한 프로세스에 대해 Parent와 Child Namespace에서 보이는 PID가 다르다.
+  - Child Namespace에서 PID=1인 프로세스는 Parent 입장에서는 PID=1이 될 수 없다.
 
   4. `NS namepsace` : file system 의 mount 지점을 분할하여 격리
+     ![ns](img/ns.png)
+
+  - Linux에서 가장 오래된 Namespace
+  - Mount Namespace 안에서 mount, unmount 명령어를 통해 자신만의 파일시스템 계층(Filesystem Hierarchy)을 구성할 수 있다
+  - chroot jail과 유사한 환경을 제공하기 위해 사용되며, 더욱 안전한 방식
 
   5. `NET namespace` : Network interface, iptables 등 network 리소스와 관련된 정보를 분할
+     ![network](img/network.png)
+
+  - Network Namespace 안에서 자신만의 network 자원(ex: 인터페이스, IP 주소, 라우팅 테이블, 포트 등)로 구성된 스택 제공
+  - Container의 Network namespace와 Host의 Network Namespace 사이에 Virtual Network Device(ex: veth pair)를 추가하여 Host to Container, Container to Container 등의 Container Networking을 구성할 수 있다
 
   6. `USR namepsace` : 프로세스가 namespace 내부와 기본 namespace 간에 각기 다른 사용자 및 그룹 ID를 가질 수 있도록 지원
 
